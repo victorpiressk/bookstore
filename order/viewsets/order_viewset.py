@@ -14,4 +14,4 @@ class OrderViewSet(ModelViewSet):
     ]
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('id')
