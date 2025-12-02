@@ -36,3 +36,5 @@ jobs:
           reporter: 'github-pr-review'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"
+          SECRET_KEY: "django-insecure-uma-string-aleatoria-32-caracteres"
