@@ -6,9 +6,7 @@ from product.models import Category
 @pytest.mark.django_db
 def test_category_model():
     category = Category.objects.create(
-        title="Eletrônicos",
-        slug="eletronicos",
-        description="Itens digitais"
+        title="Eletrônicos", slug="eletronicos", description="Itens digitais"
     )
 
     assert category.title == "Eletrônicos"

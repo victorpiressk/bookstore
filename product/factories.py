@@ -2,10 +2,11 @@ import factory
 
 from .models import Product, Category
 
+
 class CategoryFactory(factory.django.DjangoModelFactory):
-    title = factory.Faker('pystr')
-    slug = factory.Faker('pystr')
-    description = factory.Faker('pystr')
+    title = factory.Faker("pystr")
+    slug = factory.Faker("pystr")
+    description = factory.Faker("pystr")
     active = factory.Iterator([True, False])
 
     class Meta:
@@ -13,14 +14,14 @@ class CategoryFactory(factory.django.DjangoModelFactory):
 
 
 class ProductFactory(factory.django.DjangoModelFactory):
-    price = factory.Faker('pyint')
-    title = factory.Faker('pystr')
+    price = factory.Faker("pyint")
+    title = factory.Faker("pystr")
 
     @factory.post_generation
     def category(self, create, extracted, **kwargs):
         if not create:
             return
-        
+
         if extracted:
             for category in extracted:
                 self.category.add(category)
@@ -30,4 +31,4 @@ class ProductFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Product
-        skip_postgeneration_save = True # Ajuste devido ao aviso do factory_boy: futuras versões não salvarão a instância após post_generation automaticamente.
+        skip_postgeneration_save = True  # Ajuste devido ao aviso do factory_boy: futuras versões não salvarão a instância após post_generation automaticamente.
