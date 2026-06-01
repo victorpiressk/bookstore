@@ -7,8 +7,8 @@ from .models import Order
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    email = factory.Faker('pystr')
-    username = factory.Faker('pystr')
+    email = factory.Faker("pystr")
+    username = factory.Faker("pystr")
 
     class Meta:
         model = User
@@ -21,11 +21,11 @@ class OrderFactory(factory.django.DjangoModelFactory):
     def product(self, create, extracted, **kwargs):
         if not create:
             return
-        
+
         if extracted:
             for product in extracted:
                 self.product.add(product)
 
     class Meta:
         model = Order
-        skip_postgeneration_save = True # Ajuste devido ao aviso do factory_boy: futuras versões não salvarão a instância após post_generation automaticamente.
+        skip_postgeneration_save = True  # Ajuste devido ao aviso do factory_boy: futuras versões não salvarão a instância após post_generation automaticamente.
