@@ -151,31 +151,31 @@ docker-compose exec backend python manage.py createsuperuser
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
-| GET | `/bookstore/v1/products/` | Listar produtos | Não |
-| POST | `/bookstore/v1/products/` | Criar produto | Não |
-| GET | `/bookstore/v1/products/{id}/` | Detalhar produto | Não |
-| PUT | `/bookstore/v1/products/{id}/` | Atualizar produto | Não |
-| DELETE | `/bookstore/v1/products/{id}/` | Deletar produto | Não |
+| GET | `/bookstore/v1/product/` | Listar produtos | Não |
+| POST | `/bookstore/v1/product/` | Criar produto | Não |
+| GET | `/bookstore/v1/product/{id}/` | Detalhar produto | Não |
+| PUT | `/bookstore/v1/product/{id}/` | Atualizar produto | Não |
+| DELETE | `/bookstore/v1/product/{id}/` | Deletar produto | Não |
 
 ### Categorias
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
-| GET | `/bookstore/v1/categories/` | Listar categorias | Não |
-| POST | `/bookstore/v1/categories/` | Criar categoria | Não |
-| GET | `/bookstore/v1/categories/{id}/` | Detalhar categoria | Não |
-| PUT | `/bookstore/v1/categories/{id}/` | Atualizar categoria | Não |
-| DELETE | `/bookstore/v1/categories/{id}/` | Deletar categoria | Não |
+| GET | `/bookstore/v1/category/` | Listar categorias | Não |
+| POST | `/bookstore/v1/category/` | Criar categoria | Não |
+| GET | `/bookstore/v1/category/{id}/` | Detalhar categoria | Não |
+| PUT | `/bookstore/v1/category/{id}/` | Atualizar categoria | Não |
+| DELETE | `/bookstore/v1/category/{id}/` | Deletar categoria | Não |
 
 ### Pedidos
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
-| GET | `/bookstore/v1/orders/` | Listar pedidos | ✅ Token |
-| POST | `/bookstore/v1/orders/` | Criar pedido | ✅ Token |
-| GET | `/bookstore/v1/orders/{id}/` | Detalhar pedido | ✅ Token |
-| PUT | `/bookstore/v1/orders/{id}/` | Atualizar pedido | ✅ Token |
-| DELETE | `/bookstore/v1/orders/{id}/` | Deletar pedido | ✅ Token |
+| GET | `/bookstore/v1/order/` | Listar pedidos | ✅ Token |
+| POST | `/bookstore/v1/order/` | Criar pedido | ✅ Token |
+| GET | `/bookstore/v1/order/{id}/` | Detalhar pedido | ✅ Token |
+| PUT | `/bookstore/v1/order/{id}/` | Atualizar pedido | ✅ Token |
+| DELETE | `/bookstore/v1/order/{id}/` | Deletar pedido | ✅ Token |
 
 > Substitua `v1` por `v2` nas rotas — a estrutura de versionamento está preparada para evolução futura.
 
@@ -231,20 +231,52 @@ Configure as variáveis de ambiente do Render com os dados de conexão fornecido
 
 ## 🔐 Autenticação
 
-### Obter token:
+Os endpoints de `order` exigem autenticação. Como a aplicação não possui endpoint de cadastro de usuários nem acesso ao terminal em produção, esse fluxo deve ser realizado exclusivamente no ambiente local.
+
+### 1. Iniciar o ambiente
+
+Siga todos os passos da seção Desenvolvimento com Docker, incluindo a criação do superusuário. Certifique-se de que os containers estão em execução antes de prosseguir.
+
+### 2. Iniciar o servidor
+
+> **Nota:** ao executar `docker-compose up`, o servidor já é iniciado automaticamente pelo comando padrão definido no container. Caso seja necessário iniciá-lo manualmente, utilize o comando abaixo:
 
 ```bash
-curl -X POST http://localhost:8000/api-token-auth \
-  -H "Content-Type: application/json" \
-  -d '{"username":"seu_usuario","password":"sua_senha"}'
+docker-compose exec backend python manage.py runserver 0.0.0.0:8000
 ```
 
-### Usar token:
+### 3. Instalar o Postman
 
-```bash
-curl -X GET http://localhost:8000/bookstore/v1/orders/ \
-  -H "Authorization: Token SEU_TOKEN_AQUI"
+Caso ainda não tenha o Postman instalado, faça o download em [postman.com/downloads](https://www.postman.com/downloads/) e siga as instruções de instalação para o seu sistema operacional.
+
+### 4. Obter o token
+
+- Abra o Postman e crie uma nova requisição
+- Método: `POST`
+- URL: `http://localhost:8000/api-token-auth`
+- Aba **Body** → selecione **raw** e formato **JSON**
+- Insira o body:
+
+```json
+{
+  "username": "seu_usuario",
+  "password": "sua_senha"
+}
 ```
+
+- Envie a requisição — o token será retornado no corpo da resposta
+
+### 5. Acessar endpoints de order
+
+- Crie uma nova aba no Postman
+- Método: `GET`
+- URL: `http://localhost:8000/bookstore/v1/order/`
+- Aba **Headers** → adicione:
+  - Chave: `Authorization`
+  - Valor: `Token SEU_TOKEN_AQUI`
+- Aba **Authorization** → tipo **Basic Auth** → informe username e senha
+
+Envie a requisição para listar as ordens de pedidos.
 
 ---
 
