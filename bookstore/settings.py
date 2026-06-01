@@ -90,19 +90,23 @@ WSGI_APPLICATION = "bookstore.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
-        "OPTIONS": {
-            "options": f"-c search_path={os.environ.get('SQL_SCHEMA', 'public')}"
-        },
-    }
+_sql_engine = os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3")
+
+_db_config = {
+    "ENGINE": _sql_engine,
+    "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+    "USER": os.environ.get("SQL_USER", "user"),
+    "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+    "HOST": os.environ.get("SQL_HOST", "localhost"),
+    "PORT": os.environ.get("SQL_PORT", "5432"),
 }
+
+if _sql_engine == "django.db.backends.postgresql":
+    _db_config["OPTIONS"] = {
+        "options": f"-c search_path={os.environ.get('SQL_SCHEMA', 'public')}"
+    }
+
+DATABASES = {"default": _db_config}
 
 
 # Password validation
